@@ -1,10 +1,15 @@
+//Ficheiro que irá conter o código para representar o formulário no ecrã
 import React from "react";
 
-
+//Mostrar os dados das categorias
 const EscolheCategoria = (props) => {
+    //Itera todas as categorias da lista de categorias e produz as options necessárias
     const opcoes = props.listaCategorias.map((opcao) => {
         return (<option key={opcao.id} value={opcao.id}>{opcao.categoriaNome}</option>)
     })
+    //Criação do objeto <select></select>
+    //Este mesmo objeto também tem de ser capaz de exportar os dados escolhidos pelo utilizador
+    //O parâmetro "idCategoriaEscolhida" irá receber o id da categoria que foi escolhida
     return (
         <select required
             className="form-select"
@@ -24,13 +29,13 @@ const EscolheCategoria = (props) => {
 
 
 
-
+//Formulário para adicionar notícias
 class Formulario extends React.Component {
 
     constructor(props) {
         super(props);
 
-        // variáveis para guardar os dados introduzidos pelo utilizador, no Formulário
+        //Variáveis para guardar os dados introduzidos pelo utilizador, no Formulário
         this.state = {
             tituloNoticia: "",
         bodyNoticia: "",
@@ -39,39 +44,32 @@ class Formulario extends React.Component {
         }
     }
 
+    //Handler para manipular os dados escritos pelo utilizador na textbox e contém o título escrito pelo utilizador
     handlerTituloChange = (evento) => {
-        // eventuais validações dos dados podem ser aqui escritas...
-
-
         // atribuição ao STATE os dados lidos
         this.setState({ tituloNoticia: evento.target.value });
     }
 
+    //Handler para manipular os dados escritos pelo utilizador na textbox e contém o body escrito pelo utilizador
     handlerBodyChange = (evento) => {
-        // eventuais validações dos dados podem ser aqui escritas...
-
-
         // atribuição ao STATE os dados lidos
         this.setState({ bodyNoticia: evento.target.value });
     }
     
-   
+    //Handler para manipular os dados escritos pelo utilizador na textbox e contém a data escrita pelo utilizador
     handlerDataChange = (evento) => {
-        // eventuais validações dos dados podem ser aqui escritas...
-
-
         // atribuição ao STATE os dados lidos
         this.setState({ dataNoticia: evento.target.value });
     }
 
+    //Handler para manipular os dados escritos pelo utilizador na textbox e contém a categoria escrita pelo utilizador
     handleCategoriaChange = (evento) => {
         this.setState({ categoriaNoticiaFK: evento.target.value });
     }
 
-    
-
+    //Função que irá exportar os dados para fora do formulário
     handleFormSubmit = (evento) => {
-        
+        //Impede que o browser efetue o submit do formulário
         evento.preventDefault();
         // preparar os dados para o envio
         let dadosForm={

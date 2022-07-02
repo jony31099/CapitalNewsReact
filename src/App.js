@@ -62,17 +62,14 @@ async function getNoticias() {
 }
 
 
-
-
-
 class App extends React.Component{
   constructor(props) {
     super(props); 
 
     this.state = {
-      
+      //Array que irá conter os dados das notícias vindos do API
       noticias: [],
-      
+      //Array que irá conter os dados das categorias vindos do API
       categorias: [],
       
       loadState: "",
@@ -89,6 +86,7 @@ class App extends React.Component{
     
   }
 
+  //Carrega as notícias da API e adiciona-as ao array
   async LoadNoticias() {
     
     try {
@@ -106,6 +104,7 @@ class App extends React.Component{
     }
   }
 
+  //Carrega as categorias da API e adiciona-as ao array
   async LoadCategorias() {
     
     try {
@@ -141,11 +140,9 @@ class App extends React.Component{
     }
   }
 
-
-
-
-
+  
   render(){
+    //Recupera os dados das states para usar dentro deste método
     const {noticias, categorias} = this.state;
 
     switch (this.state.loadState) {

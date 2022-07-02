@@ -1,5 +1,6 @@
 import React from "react";
 
+//Função que devolve o cabeçalho da tabela
 function Cabecalho() {
     return (
         <thead>
@@ -14,9 +15,9 @@ function Cabecalho() {
     )
 }
 
-
+//Definição da função que devolve o corpo da tabela
 const Corpo = (props) => {
-    // 'map' funciona como um 'foreach()'
+    //Lê e processa todos os objetos definidos dentro do array "dadosDasNoticias"
     const rows = props.dadosDasNoticias.map((row) => {
         return (
             <tr key={row.id}>
@@ -33,12 +34,11 @@ const Corpo = (props) => {
     return (<tbody>{rows}</tbody>)
 }
 
-
-
+//Componente que junta os dois subcomponentes
 class Tabela extends React.Component {
 
     render() {
-
+        //Lê os dados que são recebidos pelo componente
         const { dadosNoticias } = this.props;
 
         return (
