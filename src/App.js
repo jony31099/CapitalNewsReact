@@ -1,9 +1,9 @@
-import React from "react";
-
+import React, { useState } from "react";
+import "./App.css";
 import Tabela from "./Tabela";
 import Formulario from './Formulario';
 
-
+var aux;
 
 async function getNoticias() {
 
@@ -30,6 +30,28 @@ async function getNoticias() {
 }
 
 
+async function getJornalistas() {
+
+  let resposta = await fetch("api/jornalistasAPI");
+  if (!resposta.ok) {
+    console.error("Não conseguimos ler os dados da API. Código: " + resposta.status);
+  }
+  // exportar os dados recebido
+  return await resposta.json();
+}
+
+
+async function getFotografias() {
+
+  let resposta = await fetch("api/fotografiasAPI");
+  if (!resposta.ok) {
+    console.error("Não conseguimos ler os dados da API. Código: " + resposta.status);
+  }
+  // exportar os dados recebido
+  return await resposta.json();
+}
+
+
 
 
 
@@ -47,7 +69,8 @@ async function getNoticias() {
   formData.append("Body", novaNoticia.Body);
   formData.append("Data", novaNoticia.Data);
   formData.append("CategoriaFK", novaNoticia.CategoriaFK);
-  
+  formData.append("JornalistaFK", novaNoticia.JornalistaFK);
+  formData.append("FotografiaFK", novaNoticia.FotografiaFK);
   // entregar os dados à API
   let resposta = await fetch("api/noticiasAPI",
     {
@@ -62,6 +85,30 @@ async function getNoticias() {
 }
 
 
+
+
+
+
+
+async function apagaNoticia(idNoticia) {
+  // criar o contentor que levará os dados para a API
+  let formData = new FormData();
+  formData.append("id", idNoticia);
+  // entregar os dados à API
+  let resposta = await fetch("api/noticiasAPI/" + idNoticia,
+    {
+      method: "DELETE",
+      body: formData
+    });
+  if (!resposta.ok) {
+    console.error(resposta);
+    throw new Error("Ocorreu um erro na eliminação dos dados do Prato",
+      resposta.status)
+  }
+}
+
+
+
 class App extends React.Component{
   constructor(props) {
     super(props); 
@@ -71,6 +118,12 @@ class App extends React.Component{
       noticias: [],
       //Array que irá conter os dados das categorias vindos do API
       categorias: [],
+
+      jornalistas: [],
+
+      fotografias: [],
+
+
       
       loadState: "",
       
@@ -83,6 +136,8 @@ class App extends React.Component{
   componentDidMount() {
     this.LoadNoticias();
     this.LoadCategorias();
+    this.LoadJornalistas();
+    this.LoadFotografias();
     
   }
 
@@ -122,6 +177,47 @@ class App extends React.Component{
     }
   }
 
+
+
+
+  //Carrega os jornalistas da API e adiciona-as ao array
+  async LoadJornalistas() {
+    
+    try {
+      this.setState({ loadState: "carregando dados" });
+      // 1.
+      let jornalistasVindasDaAPI = await getJornalistas();
+      // 2.
+      this.setState({ jornalistas: jornalistasVindasDaAPI,  loadState: "sucesso" });
+    } catch (erro) {
+      this.setState({
+        loadState: "erro",
+        errorMessage: erro.toString()
+      });
+      console.error("Aconteceu um erro no acesso aos dados dos Jornalistas. ", erro);
+    }
+  }
+
+
+
+  //Carrega as fotografias da API e adiciona-as ao array
+  async LoadFotografias() {
+    
+    try {
+      this.setState({ loadState: "carregando dados" });
+      // 1.
+      let fotografiasVindasDaAPI = await getFotografias();
+      // 2.
+      this.setState({ fotografias: fotografiasVindasDaAPI,  loadState: "sucesso" });
+    } catch (erro) {
+      this.setState({
+        loadState: "erro",
+        errorMessage: erro.toString()
+      });
+      console.error("Aconteceu um erro no acesso aos dados dos Jornalistas. ", erro);
+    }
+  }
+
   
 
 
@@ -140,10 +236,30 @@ class App extends React.Component{
     }
   }
 
+
+  
+
+
+  handleApagaNoticia = async (idNoticia) => {
+    try {
+      // exporta os dados para a API
+      await apagaNoticia(idNoticia);
+      // recarregar a Tabela com os dados dos pratos
+      this.LoadNoticias();
+    } catch (error) {
+      console.error("ocorreu um erro com a eliminação da noticia.")
+    }
+  }
+
+
+  
+
+
+
   
   render(){
     //Recupera os dados das states para usar dentro deste método
-    const {noticias, categorias} = this.state;
+    const {noticias, noticia, categorias, jornalistas, fotografias} = this.state;
 
     switch (this.state.loadState) {
       case "carregando dados":
@@ -152,21 +268,42 @@ class App extends React.Component{
         return <p>Ocorreu um erro:
                 {this.state.errorMessage + '.' ?? "Não sabemos qual..."}</p>
       case "sucesso":
+       
         return (
           <div className="container">
             {/* adição do Formulário que há-de recolher os dados da nova fotografia
                    - dadosCaes: parâmetro de Entrada no componente
                    - dadosRecolhidos: parâmetro de Saída (exportação) do componente
             */}
+            <br />
+            
+            <div className="Form">
             <h4>Inserir uma nova Noticia:</h4>
-            <Formulario dadosCategorias={categorias}
-              dadosRecolhidos={this.handleGuardaNoticia}
+            <Formulario noticiaIN={noticia} 
+                        dadosCategorias={categorias} 
+                        dadosJornalistas={jornalistas} 
+                        dadosFotografias={fotografias} 
+                        
+                        dadosRecolhidos={this.handleGuardaNoticia} 
             />
-            <hr />
+            </div>
+            
 
+
+
+            
+            <hr />
+            <br />
+      
+      
+        <h1 className="h1" style={{color: "#5f9ea0"}}>Noticias ao Minuto</h1>
+        <input type="text" placeholder="Search..." className="search" />
             {/* este componente - Tabela - irá apresentar os dados das 'fotos' no ecrã
             as 'fotos' devem ser lidas na API */}
-            <Tabela dadosNoticias={noticias} />
+          <div class="div-1"><Tabela dadosNoticias={noticias} 
+                     
+                     apagaNoticia={this.handleApagaNoticia}/></div>
+            
           </div>)
       default:
         return null;
