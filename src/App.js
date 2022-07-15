@@ -72,12 +72,12 @@ async function getFotografias() {
   formData.append("JornalistaFK", novaNoticia.JornalistaFK);
   formData.append("FotografiaFK", novaNoticia.FotografiaFK);
   // entregar os dados à API
+  console.log("passei aqui");
   let resposta = await fetch("api/noticiasAPI",
     {
       method: "POST",
       body: formData
     });
-    console.log(resposta)
   if (!resposta.ok) {
     console.error("Não conseguimos escrever os dados na API. Código: " + resposta.status);
   }
@@ -251,6 +251,19 @@ class App extends React.Component{
     }
   }
 
+  CarregaNoticiasFiltro = async (e) => {
+    if(e.key == "Enter"){
+      let noticiasVindasDaAPI = await getNoticias();
+      let noticiasFiltradas = []
+      noticiasVindasDaAPI.forEach(element => {
+        if(element.titulo.includes(e.target.value) || element.body.includes(e.target.value)){
+          noticiasFiltradas.push(element);
+        }
+      });
+      this.setState({ noticias: noticiasFiltradas, loadState: "sucesso" });
+      this.forceUpdate()
+    }
+  }
 
   
 
@@ -297,7 +310,8 @@ class App extends React.Component{
       
       
         <h1 className="h1" style={{color: "#5f9ea0"}}>Noticias ao Minuto</h1>
-        <input type="text" placeholder="Search..." className="search" />
+        <input type="text" name="chave" placeholder="Search..." className="search" onKeyPress={this.CarregaNoticiasFiltro}/>
+        
             {/* este componente - Tabela - irá apresentar os dados das 'fotos' no ecrã
             as 'fotos' devem ser lidas na API */}
           <div class="div-1"><Tabela dadosNoticias={noticias} 

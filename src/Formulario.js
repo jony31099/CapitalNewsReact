@@ -26,7 +26,7 @@ const EscolheCategoria = (props) => {
 const EscolheJornalista = (props) => {
     //Itera todas as categorias da lista de categorias e produz as options necessárias
     const opcoes = props.listaJornalistas.map((opcao) => {
-        return (<option key={opcao.id} value={opcao.id}>{opcao.Nome}</option>)
+        return (<option key={opcao.id} value={opcao.id}>{opcao.nome}</option>)
     })
     //Criação do objeto <select></select>
     //Este mesmo objeto também tem de ser capaz de exportar os dados escolhidos pelo utilizador
@@ -46,7 +46,7 @@ const EscolheJornalista = (props) => {
 const EscolheFotografia = (props) => {
     //Itera todas as categorias da lista de categorias e produz as options necessárias
     const opcoes = props.listaFotografias.map((opcao) => {
-        return (<option key={opcao.id} value={opcao.id}>{opcao.NomeFoto}</option>)
+        return (<option key={opcao.id} value={opcao.id}>{opcao.imagem}</option>)
     })
     //Criação do objeto <select></select>
     //Este mesmo objeto também tem de ser capaz de exportar os dados escolhidos pelo utilizador
@@ -162,7 +162,6 @@ class Formulario extends React.Component {
     render() {
         // ler o conteúdo das variáveis State, dentro do Render
         const { dadosCategorias, dadosJornalistas, dadosFotografias} = this.props
-        
         return (
             <form onSubmit={this.handleFormSubmit} encType="multipart/form-data">
                 <div className="row">
@@ -206,7 +205,7 @@ class Formulario extends React.Component {
                     </div>
 
                     <div className="col-md-4">
-                    Jornalista: <EscolheFotografia listaFotografias={dadosFotografias}
+                    Fotografia: <EscolheFotografia listaFotografias={dadosFotografias}
                             idFotografiaEscolhida={this.handleFotografiaChange}
                         /><br />
                     </div>
