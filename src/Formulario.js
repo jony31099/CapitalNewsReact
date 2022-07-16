@@ -15,7 +15,7 @@ const EscolheCategoria = (props) => {
         <select required
             className="form-select"
             onChange={props.idCategoriaEscolhida}>
-            <option value="">Selecione, por favor, uma Categoria</option>
+            <option value="">Selecione uma Categoria</option>
             {opcoes}
         </select>
     )
@@ -35,7 +35,7 @@ const EscolheJornalista = (props) => {
         <select required
             className="form-select"
             onChange={props.idJornalistaEscolhido}>
-            <option value="">Selecione, por favor, um Jornalista</option>
+            <option value="">Selecione um Jornalista</option>
             {opcoes}
         </select>
     )
@@ -55,7 +55,7 @@ const EscolheFotografia = (props) => {
         <select required
             className="form-select"
             onChange={props.idFotografiaEscolhida}>
-            <option value="">Selecione, por favor, uma Fotografia</option>
+            <option value="">Selecione uma Fotografia</option>
             {opcoes}
         </select>
     )
@@ -165,13 +165,29 @@ class Formulario extends React.Component {
         return (
             <form onSubmit={this.handleFormSubmit} encType="multipart/form-data">
                 <div className="row">
-                    <div className="col-md-4">
+                <div className="categoria-form">
+                        
+                        Categoria: <EscolheCategoria listaCategorias={dadosCategorias}
+                                idCategoriaEscolhida={this.handleCategoriaChange}
+                            /><br />
+    
+                        
+                        </div>
+
+                        <div className="dropdowns">
+                    Fotografia: <EscolheFotografia listaFotografias={dadosFotografias}
+                            idFotografiaEscolhida={this.handleFotografiaChange}
+                        /><br />
+                    </div>
+
+                    <div className="titulo-form">
                     Titulo: <input type="text"
                             required
                             className="form-control"
                             name="tituloNoticia"
                             value={this.state.tituloNoticia}
                             onChange={this.handlerTituloChange} /><br />
+                    </div>
                     <div className="body-form">Body: <textarea
                             required
                             className="form-control"
@@ -179,7 +195,9 @@ class Formulario extends React.Component {
                             value={this.state.bodyNoticia}
                             onChange={this.handlerBodyChange} /><br /></div>
                     
-                    <div className="body-form">
+                    
+
+                    <div className="data-form">
                     Data: <input type="date"
                             required
                             max={new Date().toISOString().split("T")[0]}
@@ -188,30 +206,21 @@ class Formulario extends React.Component {
                             onChange={this.handlerDataChange} /><br />
                     </div>
                     
-                    </div>
-                    <div className="col-md-4">
-                        
-                    Categoria: <EscolheCategoria listaCategorias={dadosCategorias}
-                            idCategoriaEscolhida={this.handleCategoriaChange}
-                        /><br />
-
                     
-                    </div>
+                    
 
-                    <div className="col-md-4">
+                    <div className="jornalista-form">
                     Jornalista: <EscolheJornalista listaJornalistas={dadosJornalistas}
                             idJornalistaEscolhido={this.handleJornalistaChange}
                         /><br />
                     </div>
 
-                    <div className="col-md-4">
-                    Fotografia: <EscolheFotografia listaFotografias={dadosFotografias}
-                            idFotografiaEscolhida={this.handleFotografiaChange}
-                        /><br />
-                    </div>
+                    <input type="submit" value="Adicionar Noticia" className="button-add" />
+
+                    
+                
+                
                 </div>
-                <input type="submit" value="Adicionar Noticia" className="btn btn-outline-primary" />
-               
             </form>
         )
     }

@@ -289,7 +289,7 @@ class App extends React.Component{
                    - dadosRecolhidos: parâmetro de Saída (exportação) do componente
             */}
             <br />
-            
+            <img src="logo.png" alt="Logo" class="image" ></img>
             <div className="Form">
             <h4>Inserir uma nova Noticia:</h4>
             <Formulario noticiaIN={noticia} 
@@ -300,21 +300,19 @@ class App extends React.Component{
                         dadosRecolhidos={this.handleGuardaNoticia} 
             />
             </div>
-            
-
-
-
-            
-            <hr />
             <br />
-      
-      
-        <h1 className="h1" style={{color: "#5f9ea0"}}>Noticias ao Minuto</h1>
-        <input type="text" name="chave" placeholder="Search..." className="search" onKeyPress={this.CarregaNoticiasFiltro}/>
+
+
+
+            
+            
+        
         
             {/* este componente - Tabela - irá apresentar os dados das 'fotos' no ecrã
             as 'fotos' devem ser lidas na API */}
-          <div class="div-1"><Tabela dadosNoticias={noticias} 
+          <div class="div-1">
+          <input type="text" name="chave" placeholder="Encontre a sua Notícia..." className="search" onKeyPress={this.CarregaNoticiasFiltro}/>
+            <Tabela dadosNoticias={noticias} 
                      
                      apagaNoticia={this.handleApagaNoticia}/></div>
             

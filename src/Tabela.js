@@ -28,20 +28,28 @@ const Corpo = (props) => {
                     <p className="body">{row.body}</p>
                     <br />
                     <br />
+                    <div className="border-dj">
                     <p className="data">{row.data} </p> 
                     <p className="jornalista">{row.jornalista}</p>
+                    </div>
+                    <br />
+                    <br />
+
+                    <button className="button"
+                        onClick={() => props.noticiaEliminar(row.id)}
+                    ><div className="Eliminar" style={{color: "white"}}>Eliminar</div></button>
+                    <br />
+                    <br />
                 </div> 
                 
                 
                 
                 
                 
-                <td>
+                
                     
-                    <button className="button"
-                        onClick={() => props.noticiaEliminar(row.id)}
-                    ><div className="Eliminar" style={{color: "white"}}>Eliminar</div></button>
-                </td>
+                    
+                
                   
                         
                 
