@@ -38,19 +38,13 @@ const Corpo = (props) => {
                     <button className="button"
                         onClick={() => props.noticiaEliminar(row.id)}
                     ><div className="Eliminar" style={{color: "white"}}>Eliminar</div></button>
+                    <br/><br/><br/>
+                    <button className="button"
+                        onClick={() => props.noticiaAtualizar(row.id)}
+                    ><div className="Eliminar" style={{color: "white"}}>Editar</div></button>
                     <br />
                     <br />
-                </div> 
-                
-                
-                
-                
-                
-                
-                    
-                    
-                
-                  
+                </div>    
                         
                 
             </tr>

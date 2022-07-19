@@ -72,10 +72,30 @@ async function getFotografias() {
   formData.append("JornalistaFK", novaNoticia.JornalistaFK);
   formData.append("FotografiaFK", novaNoticia.FotografiaFK);
   // entregar os dados à API
-  console.log("passei aqui");
   let resposta = await fetch("api/noticiasAPI",
     {
       method: "POST",
+      body: formData
+    });
+  if (!resposta.ok) {
+    console.error("Não conseguimos escrever os dados na API. Código: " + resposta.status);
+  }
+  return await resposta.json();
+}
+
+async function atualizarNoticia(novaNoticia) {
+  // criar o contentor que levará os dados para a API
+  let formData = new FormData();
+  formData.append("Titulo", novaNoticia.Titulo);
+  formData.append("Body", novaNoticia.Body);
+  formData.append("Data", novaNoticia.Data);
+  formData.append("CategoriaFK", novaNoticia.CategoriaFK);
+  formData.append("JornalistaFK", novaNoticia.JornalistaFK);
+  formData.append("FotografiaFK", novaNoticia.FotografiaFK);
+  // entregar os dados à API
+  let resposta = await fetch("api/noticiasAPI/" + novaNoticia.Id,
+    {
+      method: "PUT",
       body: formData
     });
   if (!resposta.ok) {
@@ -123,7 +143,7 @@ class App extends React.Component{
 
       fotografias: [],
 
-
+      editarDados: null,
       
       loadState: "",
       
@@ -227,6 +247,7 @@ class App extends React.Component{
    */
    handleGuardaNoticia = async (dadosDaNoticiaACarregar) => {
     try {
+      this.setState({editarDados:null})
       // exporta os dados para a API
       await adicionaNoticia(dadosDaNoticiaACarregar);
       // recarregar a Tabela com os dados das Noticias
@@ -236,9 +257,17 @@ class App extends React.Component{
     }
   }
 
+  atualizarNoticia = async(dadosAtualizar) => {
+    try {
 
-  
-
+      // exporta os dados para a API
+      await atualizarNoticia(dadosAtualizar);
+      // recarregar a Tabela com os dados das Noticias
+      await this.LoadNoticias();
+    } catch (erro) {
+      console.error("ocorreu um erro com a adição da noticia", erro);
+    }
+  }
 
   handleApagaNoticia = async (idNoticia) => {
     try {
@@ -246,6 +275,20 @@ class App extends React.Component{
       await apagaNoticia(idNoticia);
       // recarregar a Tabela com os dados dos pratos
       this.LoadNoticias();
+    } catch (error) {
+      console.error("ocorreu um erro com a eliminação da noticia.")
+    }
+  }
+
+  escolherEditarNoticia = async (idNoticia) => {
+    try {
+      this.state.noticias.forEach(element => {
+        if(element.id == idNoticia){
+          this.state.editarDados = element;
+          this.setState({editarDados: element});
+        }
+      });
+      this.forceUpdate();
     } catch (error) {
       console.error("ocorreu um erro com a eliminação da noticia.")
     }
@@ -272,7 +315,7 @@ class App extends React.Component{
   
   render(){
     //Recupera os dados das states para usar dentro deste método
-    const {noticias, noticia, categorias, jornalistas, fotografias} = this.state;
+    const {noticias, noticia, categorias, jornalistas, fotografias, editarDados} = this.state;
 
     switch (this.state.loadState) {
       case "carregando dados":
@@ -296,8 +339,11 @@ class App extends React.Component{
                         dadosCategorias={categorias} 
                         dadosJornalistas={jornalistas} 
                         dadosFotografias={fotografias} 
+
                         
-                        dadosRecolhidos={this.handleGuardaNoticia} 
+                        dadosEditar={editarDados}
+                        dadosRecolhidos={this.handleGuardaNoticia}
+                        dadosAtualizar={this.atualizarNoticia}
             />
             </div>
             <br />
@@ -312,9 +358,7 @@ class App extends React.Component{
             as 'fotos' devem ser lidas na API */}
           <div class="div-1">
           <input type="text" name="chave" placeholder="Encontre a sua Notícia..." className="search" onKeyPress={this.CarregaNoticiasFiltro}/>
-            <Tabela dadosNoticias={noticias} 
-                     
-                     apagaNoticia={this.handleApagaNoticia}/></div>
+            <Tabela dadosNoticias={noticias} editaNoticiaOut={this.escolherEditarNoticia} apagaNoticia={this.handleApagaNoticia}/></div>
             
           </div>)
       default:

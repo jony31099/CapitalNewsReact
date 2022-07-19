@@ -7,7 +7,12 @@ const EscolheCategoria = (props) => {
     //Itera todas as categorias da lista de categorias e produz as options necessárias
     const opcoes = props.listaCategorias.map((opcao) => {
         return (<option key={opcao.id} value={opcao.id}>{opcao.categoriaNome}</option>)
-    })
+    });
+
+    let editar_value = <option value="">Selecione uma Categoria</option>
+    if(props.editCategorias != null){
+        editar_value = <option value="">{props.editCategorias.categoria}</option>
+    }
     //Criação do objeto <select></select>
     //Este mesmo objeto também tem de ser capaz de exportar os dados escolhidos pelo utilizador
     //O parâmetro "idCategoriaEscolhida" irá receber o id da categoria que foi escolhida
@@ -15,7 +20,7 @@ const EscolheCategoria = (props) => {
         <select required
             className="form-select"
             onChange={props.idCategoriaEscolhida}>
-            <option value="">Selecione uma Categoria</option>
+            {editar_value}
             {opcoes}
         </select>
     )
@@ -28,6 +33,10 @@ const EscolheJornalista = (props) => {
     const opcoes = props.listaJornalistas.map((opcao) => {
         return (<option key={opcao.id} value={opcao.id}>{opcao.nome}</option>)
     })
+    let editar_value = <option value="">Selecione um Jornalista</option>
+    if(props.editJornalistas != null){
+        editar_value = <option value="">{props.editJornalistas.jornalista}</option>
+    }
     //Criação do objeto <select></select>
     //Este mesmo objeto também tem de ser capaz de exportar os dados escolhidos pelo utilizador
     //O parâmetro "idCategoriaEscolhida" irá receber o id da categoria que foi escolhida
@@ -35,7 +44,7 @@ const EscolheJornalista = (props) => {
         <select required
             className="form-select"
             onChange={props.idJornalistaEscolhido}>
-            <option value="">Selecione um Jornalista</option>
+            {editar_value}
             {opcoes}
         </select>
     )
@@ -48,6 +57,10 @@ const EscolheFotografia = (props) => {
     const opcoes = props.listaFotografias.map((opcao) => {
         return (<option key={opcao.id} value={opcao.id}>{opcao.imagem}</option>)
     })
+    let editar_value = <option value="">Selecione uma Fotografia</option>
+    if(props.editFotografias != null){
+        editar_value = <option value="">{props.editFotografias.fotografia}</option>
+    }
     //Criação do objeto <select></select>
     //Este mesmo objeto também tem de ser capaz de exportar os dados escolhidos pelo utilizador
     //O parâmetro "idCategoriaEscolhida" irá receber o id da categoria que foi escolhida
@@ -55,7 +68,7 @@ const EscolheFotografia = (props) => {
         <select required
             className="form-select"
             onChange={props.idFotografiaEscolhida}>
-            <option value="">Selecione uma Fotografia</option>
+            {editar_value}
             {opcoes}
         </select>
     )
@@ -78,7 +91,7 @@ class Formulario extends React.Component {
 
         //Variáveis para guardar os dados introduzidos pelo utilizador, no Formulário
         this.state = {
-            tituloNoticia: "",
+        tituloNoticia: "",
         bodyNoticia: "",
         dataNoticia: "",
         categoriaNoticiaFK: "",
@@ -126,17 +139,31 @@ class Formulario extends React.Component {
         //Impede que o browser efetue o submit do formulário
         evento.preventDefault();
         // preparar os dados para o envio
-        let dadosForm={
-            Titulo:this.state.tituloNoticia,
-            Body:this.state.bodyNoticia,
-            Data: this.state.dataNoticia,
-            CategoriaFK: this.state.categoriaNoticiaFK,
-            JornalistaFK: this.state.jornalistaNoticiaFK,
-            FotografiaFK: this.state.fotografiaNoticiaFK,
-            
-        }
         // preparar os dados para exportação
-        this.props.dadosRecolhidos(dadosForm);
+        if(this.props.dadosEditar == null){
+            let dadosForm={
+                Titulo:this.state.tituloNoticia,
+                Body:this.state.bodyNoticia,
+                Data: this.state.dataNoticia,
+                CategoriaFK: this.state.categoriaNoticiaFK,
+                JornalistaFK: this.state.jornalistaNoticiaFK,
+                FotografiaFK: this.state.fotografiaNoticiaFK,
+                
+            }
+            this.props.dadosRecolhidos(dadosForm);
+        }
+        else {
+            let dadosForm={
+                Id: this.props.dadosEditar.id,
+                Titulo:this.state.tituloNoticia,
+                Body:this.state.bodyNoticia,
+                Data: this.state.dataNoticia,
+                CategoriaFK: this.state.categoriaNoticiaFK,
+                JornalistaFK: this.state.jornalistaNoticiaFK,
+                FotografiaFK: this.state.fotografiaNoticiaFK,
+            }
+            this.props.dadosAtualizar(dadosForm)
+        };
     }
 
 
@@ -157,17 +184,22 @@ class Formulario extends React.Component {
                     JornalistaFK: this.state.jornalistaNoticiaFK
                 })
         }
-    } 
+    }
+
+    convertDatas = (date) => {
+        let data = new Date(date);
+        return (data.getFullYear() + "-" + (data.getMonth() + 1 >= 10 ? data.getMonth() + 1 : "0" + (data.getMonth() + 1)) + "-" + (data.getDate() >= 10 ? data.getDate() : ("0" + data.getDate())));
+    }
 
     render() {
         // ler o conteúdo das variáveis State, dentro do Render
-        const { dadosCategorias, dadosJornalistas, dadosFotografias} = this.props
+        const { dadosCategorias, dadosJornalistas, dadosFotografias, dadosEditar} = this.props;
         return (
             <form onSubmit={this.handleFormSubmit} encType="multipart/form-data">
                 <div className="row">
                 <div className="categoria-form">
                         
-                        Categoria: <EscolheCategoria listaCategorias={dadosCategorias}
+                        Categoria: <EscolheCategoria listaCategorias={dadosCategorias} editCategorias={dadosEditar}
                                 idCategoriaEscolhida={this.handleCategoriaChange}
                             /><br />
     
@@ -175,7 +207,7 @@ class Formulario extends React.Component {
                         </div>
 
                         <div className="dropdowns">
-                    Fotografia: <EscolheFotografia listaFotografias={dadosFotografias}
+                    Fotografia: <EscolheFotografia listaFotografias={dadosFotografias} editFotografias={dadosEditar}
                             idFotografiaEscolhida={this.handleFotografiaChange}
                         /><br />
                     </div>
@@ -185,14 +217,14 @@ class Formulario extends React.Component {
                             required
                             className="form-control"
                             name="tituloNoticia"
-                            value={this.state.tituloNoticia}
+                            value={dadosEditar == null ? this.state.tituloNoticia : dadosEditar.titulo                    }
                             onChange={this.handlerTituloChange} /><br />
                     </div>
                     <div className="body-form">Body: <textarea
                             required
                             className="form-control"
                             name="bodyNoticia"
-                            value={this.state.bodyNoticia}
+                            value={dadosEditar == null ? this.state.bodyNoticia : dadosEditar.body}
                             onChange={this.handlerBodyChange} /><br /></div>
                     
                     
@@ -201,7 +233,7 @@ class Formulario extends React.Component {
                     Data: <input type="date"
                             required
                             max={new Date().toISOString().split("T")[0]}
-                            value={this.state.dataNoticia}
+                            value={dadosEditar == null ? this.state.dataNoticia : this.convertDatas(dadosEditar.data)}
                             className="form-control"
                             onChange={this.handlerDataChange} /><br />
                     </div>
@@ -210,15 +242,14 @@ class Formulario extends React.Component {
                     
 
                     <div className="jornalista-form">
-                    Jornalista: <EscolheJornalista listaJornalistas={dadosJornalistas}
+                    Jornalista: <EscolheJornalista listaJornalistas={dadosJornalistas} editJornalistas={dadosEditar}
                             idJornalistaEscolhido={this.handleJornalistaChange}
                         /><br />
                     </div>
 
                     <input type="submit" value="Adicionar Noticia" className="button-add" />
-
-                    
-                
+                    <br/><br/>
+                    <input type="submit" value="Atualizar" className="button-add" />
                 
                 </div>
             </form>
